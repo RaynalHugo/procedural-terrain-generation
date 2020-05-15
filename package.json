@@ -1,0 +1,20 @@
+{
+  "name": "three-tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "start": "parcel index.html --open",
+    "build": "parcel build index.html"
+  },
+  "dependencies": {
+    "@types/three": "0.103.2",
+    "lodash": "4.17.15",
+    "noisejs": "2.1.0",
+    "three": "0.110.0"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.6.1"
+  },
+  "keywords": []
+}
