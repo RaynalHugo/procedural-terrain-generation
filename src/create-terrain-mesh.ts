@@ -1,7 +1,13 @@
 import * as THREE from "three";
 import glsl from "glslify";
 
-export const createTerrainMesh = ({ vertices, indices, normal }) => {
+export const createTerrainMesh = ({
+  vertices,
+  indices,
+  normal,
+  strength,
+  seaLevel,
+}) => {
   const bufferGeometry = new THREE.BufferGeometry();
   // itemSize = 3 because there are 3 values (components) per vertex
   bufferGeometry.setIndex(indices);
@@ -78,10 +84,8 @@ export const createTerrainMesh = ({ vertices, indices, normal }) => {
     }
 
     float random (in vec2 st) {
-    return fract(sin(dot(st.xy,
-                         vec2(12.9898,78.233)))
-                 * 43758.5453123);
-}
+      return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+    }
 
     // 2D Noise based on Morgan McGuire @morgan3d
     // https://www.shadertoy.com/view/4dS3Wd
@@ -132,8 +136,8 @@ export const createTerrainMesh = ({ vertices, indices, normal }) => {
   const blend = true;
 
   let uniforms = {
-    seaLevel: { value: 0.5 },
-    strength: { value: 30 },
+    seaLevel: { value: seaLevel },
+    strength: { value: strength },
     colors: {
       value: [
         {
@@ -154,7 +158,7 @@ export const createTerrainMesh = ({ vertices, indices, normal }) => {
         },
         {
           color: new THREE.Color("#1982e4"),
-          baseHeight: 0.3,
+          baseHeight: 0.2,
           baseBlend: blend ? 0.15 : 0,
           noiseFactor: 0,
           noiseFrequency: 1,
@@ -162,7 +166,7 @@ export const createTerrainMesh = ({ vertices, indices, normal }) => {
         },
         {
           color: new THREE.Color("#c2b280"),
-          baseHeight: 0.42,
+          baseHeight: 0.28,
           baseBlend: blend ? 0.01 : 0,
           noiseFactor: 0,
           noiseFrequency: 1,
@@ -170,34 +174,34 @@ export const createTerrainMesh = ({ vertices, indices, normal }) => {
         },
         {
           color: new THREE.Color("#63a375"),
-          baseHeight: 0.53,
+          baseHeight: 0.43,
           baseBlend: blend ? 0.05 : 0,
           noiseFactor: 0.1,
-          noiseFrequency: 1,
+          noiseFrequency: 0.02,
           noiseOffset: 0,
         },
         {
           color: new THREE.Color("#197278"),
-          baseHeight: 0.6,
+          baseHeight: 0.55,
           baseBlend: blend ? 0.08 : 0,
           noiseFactor: 0.3,
-          noiseFrequency: 0.2,
+          noiseFrequency: 0.02,
           noiseOffset: 0,
         },
         {
           color: new THREE.Color("#a2abab"),
-          baseHeight: 0.75,
-          baseBlend: blend ? 0.15 : 0,
+          baseHeight: 0.7,
+          baseBlend: blend ? 0.1 : 0,
           noiseFactor: 0.1,
-          noiseFrequency: 1,
+          noiseFrequency: 0.02,
           noiseOffset: 0,
         },
         {
           color: new THREE.Color("#ffffff"),
-          baseHeight: 0.85,
+          baseHeight: 0.75,
           baseBlend: blend ? 0.02 : 0,
           noiseFactor: 0.1,
-          noiseFrequency: 1,
+          noiseFrequency: 0.02,
           noiseOffset: 0,
         },
       ],

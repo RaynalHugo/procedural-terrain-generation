@@ -6,7 +6,7 @@ export const createCameras = ({ renderer, resolution }) => {
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    1420
   );
 
   camera.position.x = resolution;

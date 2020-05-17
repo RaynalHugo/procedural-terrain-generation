@@ -16,36 +16,47 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const resolution = 100;
-
-const noiseMap = generateNoiseMap({
-  resolution,
-  strength: 30,
+const options = {
+  resolution: 1000,
+  seaLevel: 0.3,
+  strength: 200,
   numberOfLayers: 6,
-  baseRoughness: 0.03,
-  roughness: 2.3,
+  baseRoughness: 0.002,
+  roughness: 3,
   persistance: 0.4,
-});
+};
+
+const noiseMap = generateNoiseMap(options);
 const { vertices, indices, normals } = generateHeightMap({
   noiseMap,
-  resolution,
+  resolution: options.resolution,
 });
 
-const mesh = createTerrainMesh({ vertices, indices, normals });
+const mesh = createTerrainMesh({
+  vertices,
+  indices,
+  normal: normals,
+  seaLevel: options.seaLevel,
+  strength: options.strength,
+});
 scene.add(mesh);
 
 const { lights, updateLights } = createLights();
 lights.forEach((light) => scene.add(light));
 
-const { camera, controls } = createCameras({ renderer, resolution });
+const { camera, controls } = createCameras({
+  renderer,
+  resolution: options.resolution,
+});
 
 function animate() {
   const timer = 0.0001 * Date.now();
 
-  updateLights(resolution, timer);
+  // mesh.material.uniforms.seaLevel.value = seaLevel;
+
+  updateLights(options.resolution, timer);
   controls.update();
   renderer.render(scene, camera);
-
   requestAnimationFrame(animate);
 }
 
