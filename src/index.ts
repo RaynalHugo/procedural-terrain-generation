@@ -25,7 +25,6 @@ const noiseMap = generateNoiseMap({
   baseRoughness: 0.03,
   roughness: 2.3,
   persistance: 0.4,
-  minValue: 0.39,
 });
 const { vertices, indices, normals } = generateHeightMap({
   noiseMap,

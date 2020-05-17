@@ -19,11 +19,11 @@ export const createTerrainMesh = ({ vertices, indices, normal }) => {
 
   const material = false
     ? new THREE.MeshBasicMaterial({
-        color: 0xffffff,
+        color: "#ffffff",
         wireframe: true,
       })
     : new THREE.MeshPhysicalMaterial({
-        color: 0x9b7653,
+        color: "#9b7653",
         side: THREE.BackSide,
         clearcoat: 1,
         clearcoatRoughness: 1,
@@ -35,11 +35,23 @@ export const createTerrainMesh = ({ vertices, indices, normal }) => {
 
   const vertexShader = /* glsl */ `
     varying vec3 vUv; 
+    uniform float strength;
+    uniform float seaLevel;
 
     void main() {
       vUv = position; 
-      vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
+
+      vec3 modifiedPosition = position;
+
+      if (modifiedPosition.y / strength < seaLevel) {
+        modifiedPosition.y = seaLevel * strength; 
+      }
+
+      vec4 modelViewPosition = modelViewMatrix * vec4(modifiedPosition, 1.0);
       gl_Position = projectionMatrix * modelViewPosition; 
+
+     
+
     }
   `;
 
@@ -54,7 +66,7 @@ export const createTerrainMesh = ({ vertices, indices, normal }) => {
       float noiseOffset;
     };
 
-    const int maxColorCount = 6;
+    const int maxColorCount = 8;
     uniform float strength;
     varying vec3 vUv;
 
@@ -99,6 +111,8 @@ export const createTerrainMesh = ({ vertices, indices, normal }) => {
 
       float relativeHeight = saturate(vUv.y / strength);
 
+      gl_FragColor = vec4(colors[0].color, 1);
+
       for (int i = 0; i < maxColorCount; i++ ) {
 
         float computedNoise =  noise(vec2((vUv.x + colors[i].noiseOffset) * colors[i].noiseFrequency, (vUv.z + colors[i].noiseOffset) * colors[i].noiseFrequency));
@@ -115,55 +129,73 @@ export const createTerrainMesh = ({ vertices, indices, normal }) => {
     }
   `;
 
+  const blend = true;
+
   let uniforms = {
+    seaLevel: { value: 0.5 },
     strength: { value: 30 },
     colors: {
       value: [
         {
-          color: new THREE.Color(0x1982c4),
+          color: new THREE.Color("#0062c4"),
           baseHeight: 0,
-          baseBlend: 0,
+          baseBlend: blend ? 0 : 0,
           noiseFactor: 0,
           noiseFrequency: 1,
           noiseOffset: 0,
         },
         {
-          color: new THREE.Color(0xc2b280),
-          baseHeight: 0.4,
-          baseBlend: 0.01,
+          color: new THREE.Color("#0972d4"),
+          baseHeight: 0.1,
+          baseBlend: blend ? 0.15 : 0,
           noiseFactor: 0,
           noiseFrequency: 1,
           noiseOffset: 0,
         },
         {
-          color: new THREE.Color(0x63a375),
-          baseHeight: 0.45,
-          baseBlend: 0.05,
+          color: new THREE.Color("#1982e4"),
+          baseHeight: 0.3,
+          baseBlend: blend ? 0.15 : 0,
+          noiseFactor: 0,
+          noiseFrequency: 1,
+          noiseOffset: 0,
+        },
+        {
+          color: new THREE.Color("#c2b280"),
+          baseHeight: 0.42,
+          baseBlend: blend ? 0.01 : 0,
+          noiseFactor: 0,
+          noiseFrequency: 1,
+          noiseOffset: 0,
+        },
+        {
+          color: new THREE.Color("#63a375"),
+          baseHeight: 0.53,
+          baseBlend: blend ? 0.05 : 0,
           noiseFactor: 0.1,
           noiseFrequency: 1,
           noiseOffset: 0,
         },
         {
-          color: new THREE.Color(0x197278),
+          color: new THREE.Color("#197278"),
           baseHeight: 0.6,
-          baseBlend: 0.08,
+          baseBlend: blend ? 0.08 : 0,
           noiseFactor: 0.3,
           noiseFrequency: 0.2,
           noiseOffset: 0,
         },
         {
-          color: new THREE.Color(0xa2abab),
+          color: new THREE.Color("#a2abab"),
           baseHeight: 0.75,
-          baseBlend: 0.15,
+          baseBlend: blend ? 0.15 : 0,
           noiseFactor: 0.1,
           noiseFrequency: 1,
           noiseOffset: 0,
         },
         {
-          color: new THREE.Color(0xffffff),
+          color: new THREE.Color("#ffffff"),
           baseHeight: 0.85,
-          baseBlend: 0.02,
-
+          baseBlend: blend ? 0.02 : 0,
           noiseFactor: 0.1,
           noiseFrequency: 1,
           noiseOffset: 0,
@@ -171,9 +203,6 @@ export const createTerrainMesh = ({ vertices, indices, normal }) => {
       ],
     },
   };
-
-  // 197278
-  // FFBD00
 
   let shaderMaterial = new THREE.ShaderMaterial({
     side: THREE.DoubleSide,

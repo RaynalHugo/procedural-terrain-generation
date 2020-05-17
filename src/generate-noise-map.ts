@@ -15,7 +15,7 @@ export const generateNoiseMap = ({
   baseRoughness = 0.05,
   roughness = 3,
   persistance = 0.5,
-  minValue = 1,
+  minValue = 0,
   resolution,
 }) => {
   const range0ResolutionPlus1 = range(0, resolution + 1);
@@ -54,11 +54,14 @@ export const generateNoiseMap = ({
   ).noiseValue;
 
   // 0.45 to counter random distribution
+  const randomCorrection = 0.45;
+
   const lerp = (value) =>
     clamp(
       0,
       1,
-      (value - (theoricalMin + 0.45)) / (theoricalMax - theoricalMin - 0.9)
+      (value - (theoricalMin + randomCorrection)) /
+        (theoricalMax - theoricalMin - 2 * randomCorrection)
     );
 
   const iteratee = (x, y) => ({ noiseValue, frequency, amplitude }) => {
