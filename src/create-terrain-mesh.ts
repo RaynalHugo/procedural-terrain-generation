@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import glsl from "glslify";
 
 export const createTerrainMesh = ({ vertices, indices, normal }) => {
   const bufferGeometry = new THREE.BufferGeometry();
@@ -19,7 +20,7 @@ export const createTerrainMesh = ({ vertices, indices, normal }) => {
   const material = false
     ? new THREE.MeshBasicMaterial({
         color: 0xffffff,
-        wireframe: true
+        wireframe: true,
       })
     : new THREE.MeshPhysicalMaterial({
         color: 0x9b7653,
@@ -29,65 +30,87 @@ export const createTerrainMesh = ({ vertices, indices, normal }) => {
         reflectivity: 0.0,
         // roughness: 1,
         // metalness: 0.5,
-        flatShading: false
+        flatShading: false,
       });
 
-  function vertexShader() {
-    return `
+  const vertexShader = /* glsl */ `
     varying vec3 vUv; 
 
     void main() {
       vUv = position; 
-
       vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
       gl_Position = projectionMatrix * modelViewPosition; 
     }
   `;
-  }
 
-  function fragmentShader() {
-    return `
-    uniform vec3 colorA; 
-    uniform vec3 colorB; 
-    uniform vec3 colorC; 
-    uniform vec3 colorD; 
-    uniform vec3 colorE; 
-    uniform vec3 colorF; 
+  const fragmentShader = /* glsl */ `
+
+    struct Color {
+      vec3 color;
+      float baseHeight; 
+      float baseBlend; 
+    };
+
+    const int maxColorCount = 6;
+    uniform float strength;
     varying vec3 vUv;
 
+    uniform Color colors[maxColorCount];
+
+
+    float inverseLerp(float a, float b, float value ) {
+      return saturate((value - a) / (b - a));
+    }
+
     void main() {
-      if (vUv.y > 23.0) {
-        gl_FragColor = vec4(colorA, 1);
-      } else if (vUv.y > 22.0) {
-        gl_FragColor = vec4(mix(colorB, colorA, (vUv.y - 22.0) / (23.0 - 22.0) ), 1);
-      } else if (vUv.y > 20.0) {
-        gl_FragColor = vec4(mix(colorC, colorB, (vUv.y - 20.0) / (22.0 - 20.0) ), 1);
-        // gl_FragColor = vec4(colorB, 1);
-      } else if (vUv.y > 18.2) {
-        gl_FragColor = vec4(mix(colorD, colorC, (vUv.y - 18.2) / (20.0 - 18.2) ), 1);
-        // gl_FragColor = vec4(colorC, 1);
-      } else if (vUv.y > 16.2) {
-        gl_FragColor = vec4(mix(colorE, colorD, (vUv.y - 16.2) / (18.2 - 16.2) ), 1);
-        // gl_FragColor = vec4(colorD, 1);
-      } else if (vUv.y > 15.2) {
-        gl_FragColor = vec4(mix(colorF, colorE, (vUv.y - 15.2) / (16.2 - 15.2) ), 1);
-        // gl_FragColor = vec4(colorE, 1);
-      } else {
-        gl_FragColor = vec4(colorF, 1);
-      }
+
+      float relativeHeight = saturate(vUv.y / strength);
+
+      for (int i = 0; i < maxColorCount; i++ ) {
+        float colorStrength = inverseLerp( - colors[i].baseBlend / 2.0, colors[i].baseBlend / 2.0, relativeHeight - colors[i].baseHeight);
+        gl_FragColor = (1.0 - colorStrength) * gl_FragColor + colorStrength * vec4(colors[i].color, 1);
+      };
     }
   `;
-  }
 
   // gl_FragColor = vec4(mix(colorA, colorB, (vUv.y - 10.0) / 10.0 ), 1);
 
   let uniforms = {
-    colorA: { type: "vec3", value: new THREE.Color(0xffffff) },
-    colorB: { type: "vec3", value: new THREE.Color(0x875053) },
-    colorC: { type: "vec3", value: new THREE.Color(0x197278) },
-    colorD: { type: "vec3", value: new THREE.Color(0x63a375) },
-    colorE: { type: "vec3", value: new THREE.Color(0xc2b280) },
-    colorF: { type: "vec3", value: new THREE.Color(0x1982c4) }
+    strength: { value: 30 },
+    colors: {
+      value: [
+        {
+          color: new THREE.Color(0x1982c4),
+          baseHeight: 0,
+          baseBlend: 0.0,
+        },
+        {
+          color: new THREE.Color(0xc2b280),
+          baseHeight: 0.4,
+          baseBlend: 0.01,
+        },
+        {
+          color: new THREE.Color(0x63a375),
+          baseHeight: 0.5,
+          baseBlend: 0.05,
+        },
+        {
+          color: new THREE.Color(0x197278),
+          baseHeight: 0.6,
+          baseBlend: 0.15,
+        },
+        {
+          color: new THREE.Color(0xa2abab),
+          baseHeight: 0.75,
+          baseBlend: 0.15,
+        },
+        {
+          color: new THREE.Color(0xffffff),
+          baseHeight: 0.85,
+          baseBlend: 0.06,
+        },
+      ],
+    },
   };
 
   // 197278
@@ -97,8 +120,8 @@ export const createTerrainMesh = ({ vertices, indices, normal }) => {
     side: THREE.DoubleSide,
     flatShading: true,
     uniforms: uniforms,
-    fragmentShader: fragmentShader(),
-    vertexShader: vertexShader()
+    fragmentShader: fragmentShader,
+    vertexShader: vertexShader,
   });
 
   const mesh = new THREE.Mesh(bufferGeometry, shaderMaterial);

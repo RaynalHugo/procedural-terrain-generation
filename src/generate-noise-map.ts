@@ -1,4 +1,4 @@
-import { range, map, reduce } from "lodash/fp";
+import { range, map, reduce, clamp } from "lodash/fp";
 import { Noise } from "noisejs";
 
 const noise = new Noise(0.2823);
@@ -16,13 +16,13 @@ export const generateNoiseMap = ({
   roughness = 3,
   persistance = 0.5,
   minValue = 1,
-  resolution
+  resolution,
 }) => {
   const range0ResolutionPlus1 = range(0, resolution + 1);
   const baseAccumulator = {
     noiseValue: 0,
     frequency: baseRoughness,
-    amplitude: 1
+    amplitude: 1,
   };
 
   const theoricalMax = reduce(
@@ -32,7 +32,7 @@ export const generateNoiseMap = ({
       return {
         noiseValue: newNoiseValue,
         frequency: frequency * roughness,
-        amplitude: amplitude * persistance
+        amplitude: amplitude * persistance,
       };
     },
     baseAccumulator,
@@ -46,16 +46,20 @@ export const generateNoiseMap = ({
       return {
         noiseValue: newNoiseValue,
         frequency: frequency * roughness,
-        amplitude: amplitude * persistance
+        amplitude: amplitude * persistance,
       };
     },
     baseAccumulator,
     range(0, numberOfLayers)
   ).noiseValue;
 
-  // 0.3 to counter random distribution
-  const lerp = value =>
-    (value - (theoricalMin + 0.3)) / (theoricalMax - theoricalMin - 0.6);
+  // 0.45 to counter random distribution
+  const lerp = (value) =>
+    clamp(
+      0,
+      1,
+      (value - (theoricalMin + 0.45)) / (theoricalMax - theoricalMin - 0.9)
+    );
 
   const iteratee = (x, y) => ({ noiseValue, frequency, amplitude }) => {
     const newNoiseValue =
@@ -64,7 +68,7 @@ export const generateNoiseMap = ({
     return {
       noiseValue: newNoiseValue,
       frequency: frequency * roughness,
-      amplitude: amplitude * persistance
+      amplitude: amplitude * persistance,
     };
   };
 
@@ -78,7 +82,7 @@ export const generateNoiseMap = ({
     ) * strength;
 
   return map(
-    x => map(y => evaluate(x, y), range0ResolutionPlus1),
+    (x) => map((y) => evaluate(x, y), range0ResolutionPlus1),
     range0ResolutionPlus1
   );
 };

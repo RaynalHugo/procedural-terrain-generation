@@ -9,7 +9,8 @@ import { createCameras } from "./create-cameras";
 
 const scene = new THREE.Scene();
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(window.devicePixelRatio || 1);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -24,18 +25,18 @@ const noiseMap = generateNoiseMap({
   baseRoughness: 0.03,
   roughness: 2.3,
   persistance: 0.4,
-  minValue: 0.5
+  minValue: 0.39,
 });
 const { vertices, indices, normals } = generateHeightMap({
   noiseMap,
-  resolution
+  resolution,
 });
 
 const mesh = createTerrainMesh({ vertices, indices, normals });
 scene.add(mesh);
 
 const { lights, updateLights } = createLights();
-lights.forEach(light => scene.add(light));
+lights.forEach((light) => scene.add(light));
 
 const { camera, controls } = createCameras({ renderer, resolution });
 
