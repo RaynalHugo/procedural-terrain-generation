@@ -5,11 +5,11 @@ export const createLights = () => {
   light.position.set(0, 10, 0);
 
   const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-  pointLight.position.set(10, 50, 10);
+  pointLight.position.set(10, 200, 10);
   pointLight.castShadow = true;
 
   const pointLight2 = new THREE.PointLight(0xffffff, 1, 100);
-  pointLight2.position.set(10, 50, 10);
+  pointLight2.position.set(10, 200, 10);
   pointLight2.castShadow = true;
 
   const pointLight3 = new THREE.PointLight(0xffffff, 1, 100);
@@ -37,8 +37,8 @@ export const createLights = () => {
       pointLight2,
       // pointLight3,
       pointLightHelper,
-      pointLightHelper2
+      pointLightHelper2,
     ],
-    updateLights
+    updateLights,
   };
 };

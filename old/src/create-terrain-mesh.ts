@@ -1,5 +1,11 @@
 import * as THREE from "three";
-import glsl from "glslify";
+import grass from "./assets/textures/grass.png";
+import rocks1 from "./assets/textures/rocks1.png";
+import rocks2 from "./assets/textures/rocks2.png";
+import sandyGrass from "./assets/textures/sandy-Grass.png";
+import snow from "./assets/textures/snow.png";
+import stonyGround from "./assets/textures/stony-ground.png";
+import water from "./assets/textures/water.png";
 
 export const createTerrainMesh = ({
   vertices,
@@ -55,9 +61,6 @@ export const createTerrainMesh = ({
 
       vec4 modelViewPosition = modelViewMatrix * vec4(modifiedPosition, 1.0);
       gl_Position = projectionMatrix * modelViewPosition; 
-
-     
-
     }
   `;
 
@@ -70,8 +73,10 @@ export const createTerrainMesh = ({
       float noiseFactor;
       float noiseFrequency;
       float noiseOffset;
+      sampler2D texture;
     };
 
+    uniform sampler2D colorTexture;
     const int maxColorCount = 8;
     uniform float strength;
     varying vec3 vUv;
@@ -117,6 +122,7 @@ export const createTerrainMesh = ({
 
       gl_FragColor = vec4(colors[0].color, 1);
 
+
       for (int i = 0; i < maxColorCount; i++ ) {
 
         float computedNoise =  noise(vec2((vUv.x + colors[i].noiseOffset) * colors[i].noiseFrequency, (vUv.z + colors[i].noiseOffset) * colors[i].noiseFrequency));
@@ -128,16 +134,39 @@ export const createTerrainMesh = ({
           (colors[i].baseBlend + baseBlendAddition) / 2.0,
           relativeHeight - colors[i].baseHeight
         );
-        gl_FragColor = (1.0 - colorStrength) * gl_FragColor + colorStrength * vec4(colors[i].color, 1); 
+        gl_FragColor = 
+          (1.0 - colorStrength) * gl_FragColor 
+          + colorStrength 
+          * ( vec4(
+            mix(
+              colors[i].color, 
+              texture2D( 
+                colors[i].texture, 
+                vec2(
+                  mod(vUv.x*10., 512.)/512., 
+                  mod(vUv.z*10., 512.)/512.
+                  )
+                ).rgb,
+              0.3
+              ), 
+            1)
+           ) ; 
       };
+      // gl_FragColor = vec4(texture2D( colorTexture, vec2(vUv.x, vUv.y)).rgb, 1);
     }
   `;
 
   const blend = true;
 
+  const waterTexture = new THREE.TextureLoader().load(water);
+
+  console.log(THREE.ShaderChunk);
   let uniforms = {
     seaLevel: { value: seaLevel },
     strength: { value: strength },
+    colorTexture: {
+      value: waterTexture,
+    },
     colors: {
       value: [
         {
@@ -147,6 +176,7 @@ export const createTerrainMesh = ({
           noiseFactor: 0,
           noiseFrequency: 1,
           noiseOffset: 0,
+          texture: waterTexture,
         },
         {
           color: new THREE.Color("#0972d4"),
@@ -155,6 +185,7 @@ export const createTerrainMesh = ({
           noiseFactor: 0,
           noiseFrequency: 1,
           noiseOffset: 0,
+          texture: waterTexture,
         },
         {
           color: new THREE.Color("#1982e4"),
@@ -163,6 +194,7 @@ export const createTerrainMesh = ({
           noiseFactor: 0,
           noiseFrequency: 1,
           noiseOffset: 0,
+          texture: waterTexture,
         },
         {
           color: new THREE.Color("#c2b280"),
@@ -171,6 +203,7 @@ export const createTerrainMesh = ({
           noiseFactor: 0,
           noiseFrequency: 1,
           noiseOffset: 0,
+          texture: new THREE.TextureLoader().load(sandyGrass),
         },
         {
           color: new THREE.Color("#63a375"),
@@ -179,6 +212,7 @@ export const createTerrainMesh = ({
           noiseFactor: 0.1,
           noiseFrequency: 0.02,
           noiseOffset: 0,
+          texture: new THREE.TextureLoader().load(grass),
         },
         {
           color: new THREE.Color("#197278"),
@@ -187,6 +221,7 @@ export const createTerrainMesh = ({
           noiseFactor: 0.3,
           noiseFrequency: 0.02,
           noiseOffset: 0,
+          texture: new THREE.TextureLoader().load(stonyGround),
         },
         {
           color: new THREE.Color("#a2abab"),
@@ -195,6 +230,7 @@ export const createTerrainMesh = ({
           noiseFactor: 0.1,
           noiseFrequency: 0.02,
           noiseOffset: 0,
+          texture: new THREE.TextureLoader().load(rocks1),
         },
         {
           color: new THREE.Color("#ffffff"),
@@ -203,6 +239,7 @@ export const createTerrainMesh = ({
           noiseFactor: 0.1,
           noiseFrequency: 0.02,
           noiseOffset: 0,
+          texture: new THREE.TextureLoader().load(snow),
         },
       ],
     },
@@ -214,6 +251,7 @@ export const createTerrainMesh = ({
     uniforms: uniforms,
     fragmentShader: fragmentShader,
     vertexShader: vertexShader,
+    // lights: true,
   });
 
   const mesh = new THREE.Mesh(bufferGeometry, shaderMaterial);
