@@ -160,7 +160,6 @@ export const createTerrainMesh = ({
 
   const waterTexture = new THREE.TextureLoader().load(water);
 
-  console.log(THREE.ShaderChunk);
   let uniforms = {
     seaLevel: { value: seaLevel },
     strength: { value: strength },
