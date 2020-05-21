@@ -6,9 +6,9 @@ import { Terrain } from "./terrain";
 import { Ligths } from "./lights";
 import { Controls } from "./controls";
 
-import { StoreProvider } from "../state";
+import { StoreProvider } from "../state/context";
 
-export function Scene({ state, setState }: any) {
+export function Scene({ store }: any) {
   const [ref, setRef] = useState<any>();
 
   return (
@@ -19,7 +19,7 @@ export function Scene({ state, setState }: any) {
       onCreated={() => {
         setRef(document.getElementById("canvas"));
       }}>
-      <StoreProvider value={{ state, setState }}>
+      <StoreProvider value={store}>
         {ref && (
           <Controls
             attachedDomElement={ref}
@@ -27,7 +27,7 @@ export function Scene({ state, setState }: any) {
           />
         )}
         <Ligths />
-        <Terrain position={[0, 0, 0]} seaLevel={state.seaLevel} />
+        <Terrain position={[0, 0, 0]} />
       </StoreProvider>
     </Canvas>
   );

@@ -7,14 +7,16 @@ import { theme } from "./theme";
 import { Scene } from "./scene";
 import { Overlay } from "./overlay";
 
-import { StoreProvider } from "./state";
+import { StoreProvider } from "./state/context";
+import { useCreateStore } from "./state";
 
 function App() {
-  const [state, setState] = useState({ seaLevel: 0.4, strength: 30 });
+  const store = useCreateStore();
+
   return (
     <ThemeProvider theme={theme}>
-      <Scene state={state} setState={setState} />
-      <StoreProvider value={{ state, setState }}>
+      <Scene store={store} />
+      <StoreProvider value={store}>
         <Overlay />
       </StoreProvider>
     </ThemeProvider>

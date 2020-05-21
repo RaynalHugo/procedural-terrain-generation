@@ -12,7 +12,8 @@ import water from "../../textures/water.png";
 
 import { generateHeightMap } from "./generate-height-map";
 import { generateNoiseMap } from "./generate-noise-map";
-import { useStoreContext } from "../../state";
+import { useStoreContext } from "../../state/context";
+import { useObserver } from "mobx-react";
 
 const blend = true;
 
@@ -214,8 +215,9 @@ void main() {
 `;
 
 export function Terrain({}: any) {
-  const { state } = useStoreContext();
-  const { seaLevel, strength } = state;
+  const store = useStoreContext();
+  const seaLevel = useObserver(() => store.seaLevel);
+  const strength = useObserver(() => store.strength);
   // This reference will give us direct access to the mesh
   const mesh = useRef<THREE.Mesh>();
 
@@ -255,11 +257,15 @@ export function Terrain({}: any) {
     return { vertices: vertices32Array, indices };
   }, [strength]);
 
-  const firstUniforms = useMemo(() => uniforms(seaLevel, strength), []);
+  const firstUniforms = useMemo(
+    () => uniforms(seaLevel || 0, strength || 0),
+    []
+  );
 
   return (
     <mesh
       ref={mesh}
+      position={[0, -(strength || 0) * (seaLevel || 0), 0]}
       //   scale={active ? [1.5, 1.5, 1.5] : [1, 1, 1]}s
       onClick={(e) => setActive(!active)}
       //   onPointerOver={(e) => setHover(true)}

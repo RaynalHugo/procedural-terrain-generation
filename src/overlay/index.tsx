@@ -3,20 +3,27 @@ import { set } from "lodash/fp";
 
 import { Box, Slider, Text } from "theme-ui";
 
-import { useStoreContext } from "../state";
+import { useStoreContext } from "../state/context";
+import { useObserver } from "mobx-react";
+
+import { SeaLevel, Strength } from "./sliders";
 
 export const Overlay = () => {
-  const { state, setState } = useStoreContext();
-  const seaLevel = state.seaLevel;
-  const setSeaLevel = useCallback(
-    (event) => setState(set("seaLevel", event.target.value / 100)),
-    [setState]
+  const store = useStoreContext();
+  const { setStrength, setSeaLevel } = useObserver(() => {
+    const { setStrength, setSeaLevel } = store;
+    return { setStrength, setSeaLevel };
+  });
+  const seaLevel = useObserver(() => store.seaLevel);
+  const strength = useObserver(() => store.strength);
+  const setSeaLevelFromEvent = useCallback(
+    (event) => setSeaLevel && setSeaLevel(event.target.value / 100),
+    []
   );
 
-  const strength = state.strength;
-  const setStrength = useCallback(
-    (event) => setState(set("strength", event.target.value)),
-    [setState]
+  const setStrengthFromEvent = useCallback(
+    (event) => setStrength && setStrength(event.target.value),
+    []
   );
 
   return (
@@ -42,17 +49,8 @@ export const Overlay = () => {
           margin: 2,
           boxShadow: 0,
         }}>
-        <Text>Sea Level</Text>
-
-        <Slider
-          sx={{ mt: 3, mb: 3 }}
-          value={seaLevel * 100}
-          onChange={setSeaLevel}
-        />
-
-        <Text>Strength</Text>
-
-        <Slider sx={{ mt: 3, mb: 3 }} value={strength} onChange={setStrength} />
+        <SeaLevel />
+        <Strength />
       </Box>
     </Box>
   );

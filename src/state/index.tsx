@@ -1,17 +1,14 @@
-import React, { useContext } from "react";
+import { useLocalStore } from "mobx-react";
 
-export const StoreContext = React.createContext<{
-  state: any;
-  setState: (input: any) => void;
-}>({ state: {}, setState: () => null });
+export const useCreateStore = () => {
+  const store = useLocalStore(() => ({
+    seaLevel: 0.4,
+    strength: 30,
+    setSeaLevel: (value: number) => (store.seaLevel = value),
+    setStrength: (value: number) => (store.strength = value),
+  }));
 
-export const useStoreContext = () => useContext(StoreContext);
-
-export const StoreProvider = ({
-  value,
-  children,
-}: React.PropsWithChildren<{ value: any }>) => {
-  return (
-    <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
-  );
+  return store;
 };
+
+export type Store = ReturnType<typeof useCreateStore>;
