@@ -3,9 +3,10 @@ import { set } from "lodash/fp";
 
 import { Box, Slider, Text } from "theme-ui";
 
-export const Overlay = ({ state, setState }: any) => {
-  const [value, setValue] = useState(10);
+import { useStoreContext } from "../state";
 
+export const Overlay = () => {
+  const { state, setState } = useStoreContext();
   const seaLevel = state.seaLevel || 0;
   const setSeaLevel = useCallback(
     (event) => setState(set("seaLevel", event.target.value / 100)),

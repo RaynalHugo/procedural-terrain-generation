@@ -12,6 +12,7 @@ import water from "../../textures/water.png";
 
 import { generateHeightMap } from "./generate-height-map";
 import { generateNoiseMap } from "./generate-noise-map";
+import { useStoreContext } from "../../state";
 
 const blend = true;
 const seaLevel = 0.4;
@@ -214,7 +215,9 @@ void main() {
 }
 `;
 
-export function Terrain({ seaLevel }: any) {
+export function Terrain({}: any) {
+  const { state } = useStoreContext();
+  const { seaLevel } = state;
   // This reference will give us direct access to the mesh
   const mesh = useRef<THREE.Mesh>();
 
