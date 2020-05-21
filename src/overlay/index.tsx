@@ -7,11 +7,18 @@ import { useStoreContext } from "../state";
 
 export const Overlay = () => {
   const { state, setState } = useStoreContext();
-  const seaLevel = state.seaLevel || 0;
+  const seaLevel = state.seaLevel;
   const setSeaLevel = useCallback(
     (event) => setState(set("seaLevel", event.target.value / 100)),
     [setState]
   );
+
+  const strength = state.strength;
+  const setStrength = useCallback(
+    (event) => setState(set("strength", event.target.value)),
+    [setState]
+  );
+
   return (
     <Box
       sx={{
@@ -42,6 +49,10 @@ export const Overlay = () => {
           value={seaLevel * 100}
           onChange={setSeaLevel}
         />
+
+        <Text>Strength</Text>
+
+        <Slider sx={{ mt: 3, mb: 3 }} value={strength} onChange={setStrength} />
       </Box>
     </Box>
   );

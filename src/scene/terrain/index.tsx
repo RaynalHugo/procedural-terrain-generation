@@ -15,12 +15,10 @@ import { generateNoiseMap } from "./generate-noise-map";
 import { useStoreContext } from "../../state";
 
 const blend = true;
-const seaLevel = 0.4;
-const strength = 30;
 
 const waterTexture = new THREE.TextureLoader().load(water);
 
-let uniforms = (seaLevel: number) => ({
+let uniforms = (seaLevel: number, strength: number) => ({
   seaLevel: { value: seaLevel },
   strength: { value: strength },
   colors: {
@@ -217,7 +215,7 @@ void main() {
 
 export function Terrain({}: any) {
   const { state } = useStoreContext();
-  const { seaLevel } = state;
+  const { seaLevel, strength } = state;
   // This reference will give us direct access to the mesh
   const mesh = useRef<THREE.Mesh>();
 
@@ -234,6 +232,8 @@ export function Terrain({}: any) {
     if (mesh.current) {
       // @ts-ignore
       mesh.current.material.uniforms.seaLevel.value = seaLevel;
+      // @ts-ignore
+      mesh.current.material.uniforms.strength.value = strength;
     }
   });
 
@@ -253,9 +253,9 @@ export function Terrain({}: any) {
 
     const vertices32Array = new Float32Array(vertices);
     return { vertices: vertices32Array, indices };
-  }, []);
+  }, [strength]);
 
-  const firstUniforms = useMemo(() => uniforms(seaLevel), []);
+  const firstUniforms = useMemo(() => uniforms(seaLevel, strength), []);
 
   return (
     <mesh
@@ -277,6 +277,7 @@ export function Terrain({}: any) {
           itemSize={3}
           count={vertices.length / 3}
           array={vertices}
+          onUpdate={(attribute) => (attribute.needsUpdate = true)}
         />
       </bufferGeometry>
 

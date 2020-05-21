@@ -10,7 +10,7 @@ import { Overlay } from "./overlay";
 import { StoreProvider } from "./state";
 
 function App() {
-  const [state, setState] = useState({ seaLevel: 0.4 });
+  const [state, setState] = useState({ seaLevel: 0.4, strength: 30 });
   return (
     <ThemeProvider theme={theme}>
       <Scene state={state} setState={setState} />
