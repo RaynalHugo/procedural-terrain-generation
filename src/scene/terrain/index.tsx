@@ -2,6 +2,14 @@ import React, { useRef, useState, useMemo } from "react";
 import * as THREE from "three";
 import { useFrame } from "react-three-fiber";
 
+import grass from "../../textures/grass.png";
+import rocks1 from "../../textures/rocks1.png";
+import rocks2 from "../../textures/rocks2.png";
+import sandyGrass from "../../textures/sandy-grass.png";
+import snow from "../../textures/snow.png";
+import stonyGround from "../../textures/stony-ground.png";
+import water from "../../textures/water.png";
+
 import { generateHeightMap } from "./generate-height-map";
 import { generateNoiseMap } from "./generate-noise-map";
 
@@ -9,7 +17,9 @@ const blend = true;
 const seaLevel = 0.4;
 const strength = 30;
 
-let uniforms = {
+const waterTexture = new THREE.TextureLoader().load(water);
+
+let uniforms = (seaLevel: number) => ({
   seaLevel: { value: seaLevel },
   strength: { value: strength },
   colors: {
@@ -21,7 +31,7 @@ let uniforms = {
         noiseFactor: 0,
         noiseFrequency: 1,
         noiseOffset: 0,
-        // // texture: waterTexture,
+        texture: waterTexture,
       },
       {
         color: new THREE.Color("#0972d4"),
@@ -30,7 +40,7 @@ let uniforms = {
         noiseFactor: 0,
         noiseFrequency: 1,
         noiseOffset: 0,
-        // // texture: waterTexture,
+        texture: waterTexture,
       },
       {
         color: new THREE.Color("#1982e4"),
@@ -39,7 +49,7 @@ let uniforms = {
         noiseFactor: 0,
         noiseFrequency: 1,
         noiseOffset: 0,
-        // // texture: waterTexture,
+        texture: waterTexture,
       },
       {
         color: new THREE.Color("#c2b280"),
@@ -48,7 +58,7 @@ let uniforms = {
         noiseFactor: 0,
         noiseFrequency: 1,
         noiseOffset: 0,
-        // // texture: new THREE.TextureLoader().load(sandyGrass),
+        texture: new THREE.TextureLoader().load(sandyGrass),
       },
       {
         color: new THREE.Color("#63a375"),
@@ -57,7 +67,7 @@ let uniforms = {
         noiseFactor: 0.1,
         noiseFrequency: 0.02,
         noiseOffset: 0,
-        // // texture: new THREE.TextureLoader().load(grass),
+        texture: new THREE.TextureLoader().load(grass),
       },
       {
         color: new THREE.Color("#197278"),
@@ -66,7 +76,7 @@ let uniforms = {
         noiseFactor: 0.3,
         noiseFrequency: 0.02,
         noiseOffset: 0,
-        // // texture: new THREE.TextureLoader().load(stonyGround),
+        texture: new THREE.TextureLoader().load(stonyGround),
       },
       {
         color: new THREE.Color("#a2abab"),
@@ -75,7 +85,7 @@ let uniforms = {
         noiseFactor: 0.1,
         noiseFrequency: 0.02,
         noiseOffset: 0,
-        // // texture: new THREE.TextureLoader().load(rocks1),
+        texture: new THREE.TextureLoader().load(rocks1),
       },
       {
         color: new THREE.Color("#ffffff"),
@@ -84,11 +94,11 @@ let uniforms = {
         noiseFactor: 0.1,
         noiseFrequency: 0.02,
         noiseOffset: 0,
-        // // texture: new THREE.TextureLoader().load(snow),
+        texture: new THREE.TextureLoader().load(snow),
       },
     ],
   },
-};
+});
 
 const vertexShader = /* glsl */ `
 varying vec3 vUv; 
@@ -204,18 +214,23 @@ void main() {
 }
 `;
 
-export function Terrain(props: any) {
+export function Terrain({ seaLevel }: any) {
   // This reference will give us direct access to the mesh
-  const mesh = useRef<{ rotation: { x: number; y: number } }>();
+  const mesh = useRef<THREE.Mesh>();
 
   // Set up state for the hovered and active state
   const [hovered, setHover] = useState(false);
   const [active, setActive] = useState(false);
 
   // Rotate mesh every frame, this is outside of React without overhead
+
+  const seaLevelRef = useRef(seaLevel);
+  seaLevelRef.current = seaLevel;
+
   useFrame(() => {
     if (mesh.current) {
-      //   mesh.current.rotation.x = mesh.current.rotation.y += 0.01;
+      // @ts-ignore
+      mesh.current.material.uniforms.seaLevel.value = seaLevel;
     }
   });
 
@@ -237,16 +252,16 @@ export function Terrain(props: any) {
     return { vertices: vertices32Array, indices };
   }, []);
 
+  const firstUniforms = useMemo(() => uniforms(seaLevel), []);
+
   return (
     <mesh
-      {...props}
       ref={mesh}
-      //   scale={active ? [1.5, 1.5, 1.5] : [1, 1, 1]}
+      //   scale={active ? [1.5, 1.5, 1.5] : [1, 1, 1]}s
       onClick={(e) => setActive(!active)}
       //   onPointerOver={(e) => setHover(true)}
       //   onPointerOut={(e) => setHover(false)}
     >
-      {/* <boxBufferGeometry attach="geometry" args={[1, 1, 1]} /> */}
       <bufferGeometry attach="geometry">
         <bufferAttribute
           attach="index"
@@ -257,24 +272,18 @@ export function Terrain(props: any) {
         <bufferAttribute
           attachObject={["attributes", "position"]}
           itemSize={3}
-          // @ts-ignore
           count={vertices.length / 3}
           array={vertices}
         />
       </bufferGeometry>
-      {/* <meshStandardMaterial
-        side={THREE.DoubleSide}
-        flatShading
-        attach="material"
-        color={hovered ? "hotpink" : "orange"}
-      />    */}
+
       <shaderMaterial
         side={THREE.DoubleSide}
         // flatShading
         attach="material"
         fragmentShader={fragmentShader}
         vertexShader={vertexShader}
-        uniforms={uniforms}
+        uniforms={firstUniforms}
       />
     </mesh>
   );

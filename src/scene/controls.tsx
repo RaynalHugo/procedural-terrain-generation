@@ -5,7 +5,7 @@ import { useFrame, useThree, extend } from "react-three-fiber";
 
 extend({ OrbitControls });
 
-export function Controls(props: any) {
+export function Controls({ attachedDomElement, ...otherProps }: any) {
   const ref = useRef<OrbitControls>();
   const { camera } = useThree();
   useFrame(() => {
@@ -18,8 +18,8 @@ export function Controls(props: any) {
     // @ts-ignore
     <orbitControls
       ref={ref}
-      args={[camera, document.getElementById("root")]}
-      {...props}
+      args={[camera, attachedDomElement]}
+      {...otherProps}
     />
   );
 }

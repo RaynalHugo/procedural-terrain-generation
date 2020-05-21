@@ -1,18 +1,19 @@
-import React from "react";
-import { Canvas } from "react-three-fiber";
-import "./App.css";
+import React, { useState } from "react";
+import { ThemeProvider } from "theme-ui";
 
-import { Terrain } from "./components/terrain";
-import { Ligths } from "./components/lights";
-import { Controls } from "./components/controls";
+import "./App.css";
+import { theme } from "./theme";
+
+import { Scene } from "./scene";
+import { Overlay } from "./overlay";
 
 function App() {
+  const [state, setState] = useState({ seaLevel: 0.4 });
   return (
-    <Canvas camera={{ position: [0, 0, -10] }}>
-      <Controls />
-      <Ligths />
-      <Terrain position={[0, 0, 0]} />
-    </Canvas>
+    <ThemeProvider theme={theme}>
+      <Scene state={state} setState={setState} />
+      <Overlay state={state} setState={setState} />
+    </ThemeProvider>
   );
 }
 
