@@ -12,15 +12,15 @@ import water from "../../textures/water.png";
 
 import { generateHeightMap } from "./generate-height-map";
 import { generateNoiseMap } from "./generate-noise-map";
-import { useStoreContext } from "../../state/context";
+import { useTerrainFeaturesContext } from "../../state/context";
 import { useObserver } from "mobx-react";
 
 const blend = true;
 
 const waterTexture = new THREE.TextureLoader().load(water);
 
-let uniforms = (seaLevel: number, strength: number) => ({
-  seaLevel: { value: seaLevel },
+let uniforms = (minValue: number, strength: number) => ({
+  minValue: { value: minValue },
   strength: { value: strength },
   colors: {
     value: [
@@ -103,15 +103,15 @@ let uniforms = (seaLevel: number, strength: number) => ({
 const vertexShader = /* glsl */ `
 varying vec3 vUv; 
 uniform float strength;
-uniform float seaLevel;
+uniform float minValue;
 
 void main() {
   vUv = position; 
 
   vec3 modifiedPosition = position;
 
-  if (modifiedPosition.y / strength < seaLevel) {
-    modifiedPosition.y = seaLevel * strength; 
+  if (modifiedPosition.y / strength < minValue) {
+    modifiedPosition.y = minValue * strength; 
   }
 
   vec4 modelViewPosition = modelViewMatrix * vec4(modifiedPosition, 1.0);
@@ -215,9 +215,16 @@ void main() {
 `;
 
 export function Terrain({}: any) {
-  const store = useStoreContext();
-  const seaLevel = useObserver(() => store.seaLevel);
+  const store = useTerrainFeaturesContext();
+
+  const baseRoughness = useObserver(() => store.baseRoughness);
+  const minValue = useObserver(() => store.minValue);
+  const persistance = useObserver(() => store.persistance);
+  const roughness = useObserver(() => store.roughness);
   const strength = useObserver(() => store.strength);
+  const numberOfLayers = useObserver(() => store.numberOfLayers);
+  const resolution = useObserver(() => store.resolution) as number;
+
   // This reference will give us direct access to the mesh
   const mesh = useRef<THREE.Mesh>();
 
@@ -227,13 +234,13 @@ export function Terrain({}: any) {
 
   // Rotate mesh every frame, this is outside of React without overhead
 
-  const seaLevelRef = useRef(seaLevel);
-  seaLevelRef.current = seaLevel;
+  const minValueRef = useRef(minValue);
+  minValueRef.current = minValue;
 
   useFrame(() => {
     if (mesh.current) {
       // @ts-ignore
-      mesh.current.material.uniforms.seaLevel.value = seaLevel;
+      mesh.current.material.uniforms.minValue.value = minValue;
       // @ts-ignore
       mesh.current.material.uniforms.strength.value = strength;
     }
@@ -241,31 +248,39 @@ export function Terrain({}: any) {
 
   const { vertices, indices } = useMemo(() => {
     const noiseMap = generateNoiseMap({
-      resolution: 100,
+      resolution,
       strength,
-      roughness: 4,
-      baseRoughness: 0.01,
-      persistance: 0.5,
+      roughness,
+      baseRoughness,
+      persistance,
+      numberOfLayers,
     });
 
     const { vertices, indices } = generateHeightMap({
       noiseMap,
-      resolution: 100,
+      resolution,
     });
 
     const vertices32Array = new Float32Array(vertices);
     return { vertices: vertices32Array, indices };
-  }, [strength]);
+  }, [
+    strength,
+    roughness,
+    baseRoughness,
+    persistance,
+    numberOfLayers,
+    resolution,
+  ]);
 
   const firstUniforms = useMemo(
-    () => uniforms(seaLevel || 0, strength || 0),
+    () => uniforms(minValue || 0, strength || 0),
     []
   );
 
   return (
     <mesh
       ref={mesh}
-      position={[0, -(strength || 0) * (seaLevel || 0), 0]}
+      position={[0, -(strength || 0) * (minValue || 0), 0]}
       //   scale={active ? [1.5, 1.5, 1.5] : [1, 1, 1]}s
       onClick={(e) => setActive(!active)}
       //   onPointerOver={(e) => setHover(true)}
@@ -276,6 +291,11 @@ export function Terrain({}: any) {
           attach="index"
           array={indices}
           count={indices.length}
+          onUpdate={(attribute) => {
+            // @ts-ignore
+            mesh.current && (mesh.current.geometry.verticesNeedUpdate = true);
+            // attribute.needsUpdate = true;
+          }}
           itemSize={1}
         />
         <bufferAttribute

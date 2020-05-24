@@ -1,48 +1,68 @@
 import React, { useState, useCallback } from "react";
-import { set } from "lodash/fp";
+import { get, map } from "lodash/fp";
 
 import { Box, Slider, Text } from "theme-ui";
 
-import { useStoreContext } from "../state/context";
+import { useTerrainFeaturesContext } from "../state/context";
 import { observer } from "mobx-react";
 
-export const SeaLevel = observer(() => {
-  console.log("render SL");
-  const store = useStoreContext();
+import { TerrainFeaturesStore } from "../state";
 
-  const setSeaLevelFromEvent = useCallback(
-    (event) => store.setSeaLevel && store.setSeaLevel(event.target.value / 100),
-    []
-  );
+const createSlider = ({
+  label,
+  key,
+  min = 0,
+  max = 1,
+  step = 0.01,
+}: {
+  label: string;
+  key: keyof TerrainFeaturesStore;
+  min?: number;
+  max?: number;
+  step?: number;
+}) => {
+  return observer(() => {
+    const store = useTerrainFeaturesContext();
 
-  return (
-    <>
-      <Text>Sea Level</Text>
-      <Slider
-        sx={{ mt: 3, mb: 3 }}
-        value={(store.seaLevel || 0) * 100}
-        onChange={setSeaLevelFromEvent}
-      />
-    </>
-  );
-});
-export const Strength = observer(() => {
-  const store = useStoreContext();
-  console.log("render ST");
+    const value = get(key, store) as number;
 
-  const setStrengthFromEvent = useCallback(
-    (event) => store.setStrength && store.setStrength(event.target.value),
-    []
-  );
+    const setFromEvent = useCallback((event) => {
+      // (store[key] as any) = event.target.value;
 
-  return (
-    <>
-      <Text>Strength</Text>
-      <Slider
-        sx={{ mt: 3, mb: 3 }}
-        value={store.strength || 0}
-        onChange={setStrengthFromEvent}
-      />
-    </>
-  );
-});
+      (store[key] as any) = event.target.value;
+    }, []);
+    return (
+      <>
+        <Text>
+          {label}: {value}
+        </Text>
+        <Slider
+          min={min}
+          max={max}
+          step={step}
+          sx={{ mt: 3, mb: 3 }}
+          value={value}
+          onChange={setFromEvent}
+        />
+      </>
+    );
+  });
+};
+
+const features = [
+  {
+    label: "baseRoughness",
+    key: "baseRoughness",
+    min: 0,
+    max: 0.1,
+    step: 0.001,
+  },
+  { label: "minValue", key: "minValue", min: 0, max: 1, step: 0.01 },
+  { label: "persistance", key: "persistance", min: 0, max: 2, step: 0.01 },
+  { label: "roughness", key: "roughness", min: 0, max: 10, step: 0.01 },
+  { label: "strength", key: "strength", min: 0.1, max: 100, step: 0.1 },
+  { label: "Layers", key: "numberOfLayers", min: 1, max: 10, step: 1 },
+  { label: "Resolution", key: "resolution", min: 1, max: 255, step: 10 },
+];
+
+export const sliders = map(createSlider, features);

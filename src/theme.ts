@@ -33,6 +33,17 @@ export const theme = {
       fontWeight: "heading",
     },
   },
+  buttons: {
+    primary: {
+      margin: 10,
+      color: "#fff",
+      backgroundColor: "#F00",
+      transition: "background-color 0.5s",
+      ":active": {
+        backgroundColor: "#00F",
+      },
+    },
+  },
   styles: {
     root: {
       fontFamily: "body",

@@ -10,11 +10,11 @@ const perlin01 = (x: number, y: number): number =>
   (noise.perlin2(x, y) + 1) * 0.5;
 const reversedSin = (x: number, y: number): number =>
   1 - Math.abs(Math.sin(x)) * Math.abs(Math.sin(y));
-const simplex01Sin = (x: number, y: number): number =>
-  1 - Math.abs(Math.sin(simplex01(x, y)));
+const perlin01Sin = (x: number, y: number): number =>
+  1 - Math.abs(Math.sin(perlin01(x, y)));
 
 export const generateNoiseMap = ({
-  noiseFunction = perlin01,
+  noiseFunction = perlin01Sin,
   strength = 5,
   numberOfLayers = 4,
   baseRoughness = 0.05,

@@ -1,14 +1,19 @@
 import { useLocalStore } from "mobx-react";
 
-export const useCreateStore = () => {
+export const useCreateTerrainFeaturesStore = () => {
   const store = useLocalStore(() => ({
-    seaLevel: 0.4,
+    minValue: 0.4,
     strength: 30,
-    setSeaLevel: (value: number) => (store.seaLevel = value),
-    setStrength: (value: number) => (store.strength = value),
+    roughness: 4,
+    baseRoughness: 0.01,
+    persistance: 0.5,
+    resolution: 255,
+    numberOfLayers: 6,
   }));
 
   return store;
 };
 
-export type Store = ReturnType<typeof useCreateStore>;
+export type TerrainFeaturesStore = ReturnType<
+  typeof useCreateTerrainFeaturesStore
+>;

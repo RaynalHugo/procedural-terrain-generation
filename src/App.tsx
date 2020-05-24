@@ -8,10 +8,10 @@ import { Scene } from "./scene";
 import { Overlay } from "./overlay";
 
 import { StoreProvider } from "./state/context";
-import { useCreateStore } from "./state";
+import { useCreateTerrainFeaturesStore } from "./state";
 
 function App() {
-  const store = useCreateStore();
+  const store = useCreateTerrainFeaturesStore();
 
   return (
     <ThemeProvider theme={theme}>

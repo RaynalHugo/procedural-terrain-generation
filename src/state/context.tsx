@@ -1,16 +1,21 @@
 import React, { useContext } from "react";
 
-import { Store } from ".";
+import { TerrainFeaturesStore } from ".";
 
-export const StoreContext = React.createContext<Partial<Store>>({});
+export const TerrainFeaturesContext = React.createContext<
+  Partial<TerrainFeaturesStore>
+>({});
 
-export const useStoreContext = () => useContext(StoreContext);
+export const useTerrainFeaturesContext = () =>
+  useContext(TerrainFeaturesContext);
 
 export const StoreProvider = ({
   value,
   children,
 }: React.PropsWithChildren<{ value: any }>) => {
   return (
-    <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
+    <TerrainFeaturesContext.Provider value={value}>
+      {children}
+    </TerrainFeaturesContext.Provider>
   );
 };

@@ -1,30 +1,14 @@
-import React, { useState, useCallback } from "react";
-import { set } from "lodash/fp";
+import React from "react";
+import { map } from "lodash/fp";
 
-import { Box, Slider, Text } from "theme-ui";
+import { Box, Button, Label, Checkbox } from "theme-ui";
 
-import { useStoreContext } from "../state/context";
-import { useObserver } from "mobx-react";
+import { useTerrainFeaturesContext } from "../state/context";
 
-import { SeaLevel, Strength } from "./sliders";
+import { sliders } from "./sliders";
 
 export const Overlay = () => {
-  const store = useStoreContext();
-  const { setStrength, setSeaLevel } = useObserver(() => {
-    const { setStrength, setSeaLevel } = store;
-    return { setStrength, setSeaLevel };
-  });
-  const seaLevel = useObserver(() => store.seaLevel);
-  const strength = useObserver(() => store.strength);
-  const setSeaLevelFromEvent = useCallback(
-    (event) => setSeaLevel && setSeaLevel(event.target.value / 100),
-    []
-  );
-
-  const setStrengthFromEvent = useCallback(
-    (event) => setStrength && setStrength(event.target.value),
-    []
-  );
+  const store = useTerrainFeaturesContext();
 
   return (
     <Box
@@ -49,8 +33,19 @@ export const Overlay = () => {
           margin: 2,
           boxShadow: 0,
         }}>
-        <SeaLevel />
-        <Strength />
+        {map(
+          (Slider) => (
+            //@ts-ignore
+            <Slider />
+          ),
+          sliders
+        )}
+      </Box>
+      <Button onClick={console.log}>Click Me</Button>
+      <Box sx={{ m: 2, width: "fit-content" }}>
+        <Label>
+          <Checkbox defaultChecked={true} /> Blend
+        </Label>
       </Box>
     </Box>
   );
