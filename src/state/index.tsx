@@ -5,7 +5,7 @@ export const useCreateTerrainFeaturesStore = () => {
     minValue: 0.4,
     strength: 30,
     roughness: 4,
-    baseRoughness: 0.01,
+    baseRoughness: 0.5,
     persistance: 0.5,
     resolution: 255,
     numberOfLayers: 6,

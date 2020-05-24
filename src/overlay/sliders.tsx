@@ -29,7 +29,7 @@ const createSlider = ({
     const setFromEvent = useCallback((event) => {
       // (store[key] as any) = event.target.value;
 
-      (store[key] as any) = event.target.value;
+      (store[key] as any) = Number(event.target.value);
     }, []);
     return (
       <>
@@ -50,19 +50,19 @@ const createSlider = ({
 };
 
 const features = [
+  { label: "minValue", key: "minValue", min: 0, max: 1, step: 0.01 },
+  { label: "strength", key: "strength", min: 0.1, max: 100, step: 0.1 },
   {
     label: "baseRoughness",
     key: "baseRoughness",
     min: 0,
-    max: 0.1,
-    step: 0.001,
+    max: 3,
+    step: 0.01,
   },
-  { label: "minValue", key: "minValue", min: 0, max: 1, step: 0.01 },
-  { label: "persistance", key: "persistance", min: 0, max: 2, step: 0.01 },
   { label: "roughness", key: "roughness", min: 0, max: 10, step: 0.01 },
-  { label: "strength", key: "strength", min: 0.1, max: 100, step: 0.1 },
+  { label: "persistance", key: "persistance", min: 0, max: 2, step: 0.01 },
   { label: "Layers", key: "numberOfLayers", min: 1, max: 10, step: 1 },
-  { label: "Resolution", key: "resolution", min: 1, max: 255, step: 10 },
+  // { label: "Resolution", key: "resolution", min: 1, max: 255, step: 10 },
 ];
 
 export const sliders = map(createSlider, features);

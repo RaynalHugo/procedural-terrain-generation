@@ -293,8 +293,9 @@ export function Terrain({}: any) {
           count={indices.length}
           onUpdate={(attribute) => {
             // @ts-ignore
+            attribute.needsUpdate = true;
+            // @ts-ignore
             mesh.current && (mesh.current.geometry.verticesNeedUpdate = true);
-            // attribute.needsUpdate = true;
           }}
           itemSize={1}
         />
