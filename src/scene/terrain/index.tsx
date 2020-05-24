@@ -12,7 +12,7 @@ import water from "../../textures/water.png";
 
 import { generateHeightMap } from "./generate-height-map";
 import { generateNoiseMap } from "./generate-noise-map";
-import { useTerrainFeaturesContext } from "../../state/context";
+import { useTerrainFeaturesContext } from "../../state/terrain-features";
 import { useObserver } from "mobx-react";
 
 const blend = true;

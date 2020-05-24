@@ -6,9 +6,10 @@ import { Terrain } from "./terrain";
 import { Ligths } from "./lights";
 import { Controls } from "./controls";
 
-import { StoreProvider } from "../state/context";
+import { LayoutStoreProvider } from "../state/layout";
+import { TerrainFeaturesStoreProvider } from "../state/terrain-features";
 
-export function Scene({ store }: any) {
+export function Scene({ terrainFeaturesStore, layoutStore }: any) {
   const [ref, setRef] = useState<any>();
 
   return (
@@ -19,16 +20,18 @@ export function Scene({ store }: any) {
       onCreated={() => {
         setRef(document.getElementById("canvas"));
       }}>
-      <StoreProvider value={store}>
-        {ref && (
-          <Controls
-            attachedDomElement={ref}
-            target={new THREE.Vector3(50, 0, 50)}
-          />
-        )}
-        <Ligths />
-        <Terrain position={[0, 0, 0]} />
-      </StoreProvider>
+      <TerrainFeaturesStoreProvider value={terrainFeaturesStore}>
+        <LayoutStoreProvider value={layoutStore}>
+          {ref && (
+            <Controls
+              attachedDomElement={ref}
+              target={new THREE.Vector3(50, 0, 50)}
+            />
+          )}
+          <Ligths />
+          <Terrain position={[0, 0, 0]} />
+        </LayoutStoreProvider>
+      </TerrainFeaturesStoreProvider>
     </Canvas>
   );
 }

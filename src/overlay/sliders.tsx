@@ -3,10 +3,10 @@ import { get, map } from "lodash/fp";
 
 import { Box, Slider, Text } from "theme-ui";
 
-import { useTerrainFeaturesContext } from "../state/context";
+import { useTerrainFeaturesContext } from "../state/terrain-features";
 import { observer } from "mobx-react";
 
-import { TerrainFeaturesStore } from "../state";
+import { TerrainFeaturesStore } from "../state/terrain-features";
 
 const createSlider = ({
   label,

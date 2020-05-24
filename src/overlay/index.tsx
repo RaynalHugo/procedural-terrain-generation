@@ -3,7 +3,7 @@ import { map } from "lodash/fp";
 
 import { Box, Button, Label, Checkbox } from "theme-ui";
 
-import { useTerrainFeaturesContext } from "../state/context";
+import { useTerrainFeaturesContext } from "../state/terrain-features";
 
 import { sliders } from "./sliders";
 
