@@ -102,9 +102,9 @@ const store = observable(defaults);
 
 export type TerrainFeaturesStore = typeof defaults;
 
-export const TerrainFeaturesContext = React.createContext<
-  Partial<TerrainFeaturesStore>
->(store);
+export const TerrainFeaturesContext = React.createContext<TerrainFeaturesStore>(
+  store
+);
 
 export const useTerrainFeaturesContext = () =>
   useContext(TerrainFeaturesContext);

@@ -1,18 +1,27 @@
 import React, { useContext } from "react";
 import { observable } from "mobx";
 
+export type LayoutStore = {
+  mode: "COLORS" | "SELECT" | "TERRAIN";
+  setMode: (mode: "COLORS" | "SELECT" | "TERRAIN") => void;
+  selectedLayer: number | null;
+  setSelectLayer: (layerIndex: number) => void;
+  deselectLayer: () => void;
+};
+
 const store = observable({
   mode: "COLORS",
   setMode: (value: "COLORS" | "SELECT" | "TERRAIN") => (store.mode = value),
-});
+  selectedLayer: null,
+  setSelectLayer: (value) => (store.selectedLayer = value),
+  deselectLayer: () => (store.selectedLayer = null),
+}) as LayoutStore;
 
 export const useCreateLayoutStore = () => {
   return store;
 };
 
-export type LayoutStore = ReturnType<typeof useCreateLayoutStore>;
-
-export const LayoutContext = React.createContext<Partial<LayoutStore>>({});
+export const LayoutContext = React.createContext<LayoutStore>(store);
 
 export const useLayoutContext = () => useContext(LayoutContext);
 

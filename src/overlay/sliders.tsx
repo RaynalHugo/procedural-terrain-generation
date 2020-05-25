@@ -27,8 +27,6 @@ const createSlider = ({
     const value = get(key, store) as number;
 
     const setFromEvent = useCallback((event) => {
-      // (store[key] as any) = event.target.value;
-
       (store[key] as any) = Number(event.target.value);
     }, []);
     return (
