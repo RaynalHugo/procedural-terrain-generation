@@ -4,13 +4,13 @@ import { Noise } from "noisejs";
 
 const noise = new Noise(0.2823);
 
-const simplex01 = (x: number, y: number): number =>
+export const simplex01 = (x: number, y: number): number =>
   (noise.simplex2(x, y) + 1) * 0.5;
-const perlin01 = (x: number, y: number): number =>
+export const perlin01 = (x: number, y: number): number =>
   (noise.perlin2(x / 100, y / 100) + 1) * 0.5;
-const reversedSin = (x: number, y: number): number =>
+export const reversedSin = (x: number, y: number): number =>
   1 - Math.abs(Math.sin(x)) * Math.abs(Math.sin(y));
-const perlin01Sin = (x: number, y: number): number =>
+export const perlin01Sin = (x: number, y: number): number =>
   1 - Math.abs(Math.sin(perlin01(x, y)));
 
 export const generateNoiseMap = ({

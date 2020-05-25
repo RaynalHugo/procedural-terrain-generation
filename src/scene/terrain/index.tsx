@@ -3,13 +3,13 @@ import { map } from "lodash/fp";
 import * as THREE from "three";
 import { useFrame } from "react-three-fiber";
 
-import grass from "../../textures/grass.png";
-import rocks1 from "../../textures/rocks1.png";
-import rocks2 from "../../textures/rocks2.png";
-import sandyGrass from "../../textures/sandy-grass.png";
-import snow from "../../textures/snow.png";
-import stonyGround from "../../textures/stony-ground.png";
-import water from "../../textures/water.png";
+// import grass from "../../textures/grass.png";
+// import rocks1 from "../../textures/rocks1.png";
+// import rocks2 from "../../textures/rocks2.png";
+// import sandyGrass from "../../textures/sandy-grass.png";
+// import snow from "../../textures/snow.png";
+// import stonyGround from "../../textures/stony-ground.png";
+// import water from "../../textures/water.png";
 
 import { generateHeightMap } from "./generate-height-map";
 import { generateNoiseMap } from "./generate-noise-map";
@@ -26,7 +26,7 @@ const blend = true;
 
 // const waterTexture = new THREE.TextureLoader().load(water);
 
-export function Terrain({}: any) {
+export function Terrain(props: any) {
   const store = useTerrainFeaturesContext();
 
   const layers = useObserver(() => store.layers) as Color[];
@@ -43,7 +43,7 @@ export function Terrain({}: any) {
   const mesh = useRef<THREE.Mesh>();
 
   // Set up state for the hovered and active state
-  const [hovered, setHover] = useState(false);
+  // const [hovered, setHover] = useState(false);
   const [active, setActive] = useState(false);
 
   // Rotate mesh every frame, this is outside of React without overhead
@@ -93,6 +93,7 @@ export function Terrain({}: any) {
 
   const firstUniforms = useMemo(
     () => createUniforms(minValue || 0, strength || 0, layers, blend),
+    // eslint-disable-next-line
     []
   );
 

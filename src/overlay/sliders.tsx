@@ -26,9 +26,12 @@ const createSlider = ({
 
     const value = get(key, store) as number;
 
-    const setFromEvent = useCallback((event) => {
-      (store[key] as any) = Number(event.target.value);
-    }, []);
+    const setFromEvent = useCallback(
+      (event) => {
+        (store[key] as any) = Number(event.target.value);
+      },
+      [store]
+    );
     return (
       <Box p={2}>
         <Flex sx={{ flexDirection: "row", justifyContent: "space-between" }}>

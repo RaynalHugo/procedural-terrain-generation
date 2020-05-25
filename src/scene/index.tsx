@@ -14,7 +14,6 @@ export function Scene({ terrainFeaturesStore, layoutStore }: any) {
   const [ref, setRef] = useState<any>();
 
   return (
-    // @ts-ignore
     <Canvas
       id="canvas"
       camera={{ position: [-10, 50, -10] }}

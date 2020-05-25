@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { useFrame, useResource, extend } from "react-three-fiber";

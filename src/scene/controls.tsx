@@ -14,12 +14,7 @@ export function Controls({ attachedDomElement, ...otherProps }: any) {
     }
   });
 
-  return (
-    // @ts-ignore
-    <orbitControls
-      ref={ref}
-      args={[camera, attachedDomElement]}
-      {...otherProps}
-    />
-  );
+  const args = [camera, attachedDomElement];
+  // @ts-ignore
+  return <orbitControls ref={ref} args={args} {...otherProps} />;
 }

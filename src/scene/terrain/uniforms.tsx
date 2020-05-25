@@ -1,6 +1,5 @@
 import { map } from "lodash/fp";
 import * as THREE from "three";
-import { useFrame } from "react-three-fiber";
 
 // import grass from "../../textures/grass.png";
 // import rocks1 from "../../textures/rocks1.png";
@@ -45,12 +44,3 @@ export const createUniforms = (
     value: map(formatLayer(blend), colors),
   },
 });
-
-// useFrame(() => {
-//   if (mesh.current) {
-//     // @ts-ignore
-//     mesh.current.material.uniforms.minValue.value = minValue;
-//     // @ts-ignore
-//     mesh.current.material.uniforms.strength.value = strength;
-//   }
-// });

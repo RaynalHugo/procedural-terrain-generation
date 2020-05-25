@@ -5,13 +5,13 @@ import { observer } from "mobx-react";
 import { ChromePicker } from "react-color";
 
 import { useTerrainFeaturesContext, Color } from "../../state/terrain-features";
-import { useLayoutContext } from "../../state/layout";
+// import { useLayoutContext } from "../../state/layout";
 import { Slider, Box, Flex, Text } from "theme-ui";
 
 export const LayerDetails = observer(
   ({ layerIndex }: { layerIndex: number | null }) => {
     const terrainFeaturesStore = useTerrainFeaturesContext();
-    const layoutStore = useLayoutContext();
+    // const layoutStore = useLayoutContext();
 
     const ColorPickerRef = useRef();
 
