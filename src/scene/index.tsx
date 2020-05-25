@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import * as THREE from "three";
 import { Canvas } from "react-three-fiber";
+import { Sky } from "drei";
 
 import { Terrain } from "./terrain";
 import { Ligths } from "./lights";
@@ -20,14 +21,15 @@ export function Scene({ terrainFeaturesStore, layoutStore }: any) {
       onCreated={() => {
         setRef(document.getElementById("canvas"));
       }}>
-      <TerrainFeaturesStoreProvider value={terrainFeaturesStore}>
-        <LayoutStoreProvider value={layoutStore}>
+      <TerrainFeaturesStoreProvider>
+        <LayoutStoreProvider>
           {ref && (
             <Controls
               attachedDomElement={ref}
               target={new THREE.Vector3(50, 0, 50)}
             />
           )}
+          <Sky />
           <Ligths />
           <Terrain position={[0, 0, 0]} />
         </LayoutStoreProvider>

@@ -7,7 +7,7 @@ export const theme = {
     heading: "inherit",
     monospace: "Menlo, monospace",
   },
-  radii: ["0.5em"],
+  radii: ["0.2em", "0.5em"],
   shadows: ["0px 0px 5px rgba(0, 0, 0, 0.3)"],
   fontSizes: [12, 14, 16, 20, 24, 32, 48, 64, 96],
   fontWeights: {

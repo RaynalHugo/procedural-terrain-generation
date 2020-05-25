@@ -1,14 +1,14 @@
 import React from "react";
-import { map } from "lodash/fp";
+import { Box, Select, Text } from "theme-ui";
+import { observer } from "mobx-react";
 
-import { Box, Button, Label, Checkbox } from "theme-ui";
+import { useLayoutContext } from "../state/layout";
 
-import { useTerrainFeaturesContext } from "../state/terrain-features";
+import { TerrainFeatures } from "./terrain-features";
+import { Colors } from "./colors";
 
-import { sliders } from "./sliders";
-
-export const Overlay = () => {
-  const store = useTerrainFeaturesContext();
+export const Overlay = observer(() => {
+  const store = useLayoutContext();
 
   return (
     <Box
@@ -28,25 +28,26 @@ export const Overlay = () => {
         sx={{
           bg: "background",
           width: "fit-content",
-          borderRadius: 0,
-          padding: 1,
+          borderRadius: 1,
+          padding: 2,
           margin: 2,
           boxShadow: 0,
         }}>
-        {map(
-          (Slider) => (
-            //@ts-ignore
-            <Slider />
-          ),
-          sliders
-        )}
+        <Text>Mode</Text>
+        <Select
+          sx={{ width: 120 }}
+          placeholder="Select..."
+          onChange={(event) =>
+            // @ts-ignore
+            store.setMode && store.setMode(event.target.value)
+          }>
+          <option value={"SELECT"}>Select...</option>
+          <option value={"COLORS"}>Colors</option>
+          <option value={"TERRAIN"}>Terrain</option>
+        </Select>
       </Box>
-      <Button onClick={console.log}>Click Me</Button>
-      <Box sx={{ m: 2, width: "fit-content" }}>
-        <Label>
-          <Checkbox defaultChecked={true} /> Blend
-        </Label>
-      </Box>
+      {store.mode === "TERRAIN" && <TerrainFeatures />}
+      {store.mode === "COLORS" && <Colors />}
     </Box>
   );
-};
+});

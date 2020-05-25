@@ -1,13 +1,12 @@
-import { useLocalStore } from "mobx-react";
 import React, { useContext } from "react";
+import { observable } from "mobx";
+
+const store = observable({
+  mode: "COLORS",
+  setMode: (value: "COLORS" | "SELECT" | "TERRAIN") => (store.mode = value),
+});
 
 export const useCreateLayoutStore = () => {
-  const store = useLocalStore(() => ({
-    mode: "SELECT",
-
-    setMode: (value: "COLORS" | "SELECT" | "TERRAIN") => (store.mode = value),
-  }));
-
   return store;
 };
 
@@ -18,10 +17,11 @@ export const LayoutContext = React.createContext<Partial<LayoutStore>>({});
 export const useLayoutContext = () => useContext(LayoutContext);
 
 export const LayoutStoreProvider = ({
-  value,
   children,
-}: React.PropsWithChildren<{ value: any }>) => {
+}: React.PropsWithChildren<{}>) => {
   return (
-    <LayoutContext.Provider value={value}>{children}</LayoutContext.Provider>
+    <LayoutContext.Provider value={store}>{children}</LayoutContext.Provider>
   );
 };
+
+export type TerrainFeaturesStore = { mode: "COLORS" | "SELECT" | "TERRAIN" };
