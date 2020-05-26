@@ -106,7 +106,9 @@ export function Terrain(props: any) {
       //   onPointerOver={(e) => setHover(true)}
       //   onPointerOut={(e) => setHover(false)}
     >
-      <bufferGeometry attach="geometry">
+      <bufferGeometry
+        attach="geometry"
+        onUpdate={(geom) => geom.computeVertexNormals()}>
         <bufferAttribute
           attach="index"
           array={indices}
@@ -129,6 +131,7 @@ export function Terrain(props: any) {
       </bufferGeometry>
 
       <shaderMaterial
+        precision={"mediump"}
         side={THREE.DoubleSide}
         // flatShading
         attach="material"
@@ -136,6 +139,15 @@ export function Terrain(props: any) {
         vertexShader={vertexShader}
         uniforms={firstUniforms}
       />
+      {/* <meshNormalMaterial
+        precision={"mediump"}
+        side={THREE.DoubleSide}
+        // flatShading
+        attach="material"
+        // fragmentShader={fragmentShader}
+        // vertexShader={vertexShader}
+        // uniforms={firstUniforms}
+      /> */}
     </mesh>
   );
 }

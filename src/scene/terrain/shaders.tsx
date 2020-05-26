@@ -73,15 +73,17 @@ void main() {
 
   float relativeHeight = clamp( vUv.y / strength , 0. ,1.);
 
+  // gl_FragColor = vec4(0,1,1, 1);
 
   gl_FragColor = vec4(colors[0].color, 1);
-//   gl_FragColor = vec4( relativeHeight ,0,0 , 1);
+  gl_FragColor = vec4( relativeHeight, 0, 0, 1);
 
 
 
   for (int i = 0; i < maxColorCount; i++ ) {
 
     float computedNoise =  noise(vec2((vUv.x + colors[i].noiseOffset) * colors[i].noiseFrequency, (vUv.z + colors[i].noiseOffset) * colors[i].noiseFrequency));
+   
     float noiseFactor = colors[i].noiseFactor;
     float baseBlendAddition = (computedNoise * noiseFactor - noiseFactor / 2.0);
 
@@ -90,25 +92,33 @@ void main() {
       (colors[i].baseBlend + baseBlendAddition) / 2.0,
       relativeHeight - colors[i].baseHeight
     );
-    gl_FragColor = 
+
+  //   gl_FragColor = 
+  //     clamp((1.0 - colorStrength) * gl_FragColor 
+  //     + colorStrength 
+  //     * ( vec4(
+  //       mix(
+  //         colors[i].color, 
+  //         texture2D( 
+  //           colors[i].texture, 
+  //           vec2(
+  //             mod(vUv.x*10., 512.)/512., 
+  //             mod(vUv.z*10., 512.)/512.
+  //             )
+  //           ).rgb,
+  //         0.
+  //         // 0.3
+  //         ), 
+  //       1.)
+  //      ), vec4(0., 0., 0., 0.), vec4(1., 1., 1., 1.)) ; 
+  // };
+
+  gl_FragColor = 
       (1.0 - colorStrength) * gl_FragColor 
       + colorStrength 
-      * ( vec4(
-        mix(
-          colors[i].color, 
-          texture2D( 
-            colors[i].texture, 
-            vec2(
-              mod(vUv.x*10., 512.)/512., 
-              mod(vUv.z*10., 512.)/512.
-              )
-            ).rgb,
-          0.
-          // 0.3
-          ), 
-        1)
-       ) ; 
+      *  vec4(colors[i].color, 1.); 
   };
-// gl_FragColor = vec4(texture2D( colorTexture, vec2(vUv.x, vUv.y)).rgb, 1);
+
+
 }
 `;

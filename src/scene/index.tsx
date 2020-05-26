@@ -12,11 +12,12 @@ import { TerrainFeaturesStoreProvider } from "../state/terrain-features";
 
 export function Scene({ terrainFeaturesStore, layoutStore }: any) {
   const [ref, setRef] = useState<any>();
-
+  console.log("window.devicePixelRatio", window.devicePixelRatio);
   return (
     <Canvas
       id="canvas"
       camera={{ position: [-10, 50, -10] }}
+      pixelRatio={window.devicePixelRatio}
       onCreated={() => {
         setRef(document.getElementById("canvas"));
       }}>
