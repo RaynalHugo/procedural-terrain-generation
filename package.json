@@ -16,7 +16,7 @@
     "@types/theme-ui": "0.3.2",
     "color": "3.1.2",
     "drei": "0.0.41",
-    "lodash": "4.17.15",
+    "lodash": "4.17.19",
     "mobx": "5.15.4",
     "mobx-react": "6.2.2",
     "noisejs": "2.1.0",
