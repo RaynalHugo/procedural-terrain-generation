@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@types/three": "0.103.2",
-    "lodash": "4.17.15",
+    "lodash": "4.17.21",
     "noisejs": "2.1.0",
     "three": "0.110.0"
   },
