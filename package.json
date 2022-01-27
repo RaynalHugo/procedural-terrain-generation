@@ -28,7 +28,7 @@
     "react-three-fiber": "4.2.4",
     "serve": "11.3.1",
     "theme-ui": "0.3.1",
-    "three": "0.116.1",
+    "three": "0.137.0",
     "typescript": "~3.7.2"
   },
   "scripts": {
